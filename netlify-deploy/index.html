@@ -200,6 +200,22 @@
                 actions: ["फीस की जानकारी", "छात्रवृत्ति", "समय सारणी", "प्रवेश", "परीक्षा समय", "सामान्य सहायता"],
                 placeholder: "यहाँ अपना प्रश्न लिखें...",
                 hint: "आप हिंदी, अंग्रेजी या अन्य भारतीय भाषाओं में प्रश्न पूछ सकते हैं"
+            },
+            mr: {
+                greeting: "नमस्कार! मी तुमचा बहुभाषिक कॅम्पस असिस्टंट आहे। मी फी, शिष्यवृत्ती, वेळापत्रक, प्रवेश आणि इतर महाविद्यालयीन माहितीमध्ये तुमची मदत करू शकतो। तुम्ही मराठी, इंग्रजी किंवा आमच्या कोणत्याही समर्थित प्रादेशिक भाषेत माझ्याशी बोलू शकता!",
+                thinking: "तुमचा प्रश्न समजून घेत आहे...",
+                quickTitle: "त्वरित मदत",
+                actions: ["फी माहिती", "शिष्यवृत्ती", "वेळापत्रक", "प्रवेश", "परीक्षा वेळ", "सामान्य मदत"],
+                placeholder: "येथे तुमचा प्रश्न लिहा...",
+                hint: "तुम्ही मराठी, इंग्रजी किंवा इतर भारतीय भाषांमध्ये प्रश्न विचारू शकता"
+            },
+            gu: {
+                greeting: "નમસ્તે! હું તમારો બહુભાષી કેમ્પસ આસિસ્ટન્ટ છું। હું ફી, શિષ્યવૃત્તિ, સમયપત્રક, પ્રવેશ અને અન્ય કોલેજની માહિતીમાં તમારી મદદ કરી શકું છું। તમે ગુજરાતી, અંગ્રેજી અથવા અમારી કોઈપણ સમર્થિત પ્રાદેશિક ભાષામાં મારી સાથે વાત કરી શકો છો!",
+                thinking: "તમારા પ્રશ્નને સમજી રહ્યો છું...",
+                quickTitle: "ઝડપી મદદ",
+                actions: ["ફી માહિતી", "શિષ્યવૃત્તિ", "સમયપત્રક", "પ્રવેશ", "પરીક્ષા સમય", "સામાન્ય મદદ"],
+                placeholder: "અહીં તમારો પ્રશ્ન લખો...",
+                hint: "તમે ગુજરાતી, અંગ્રેજી અથવા અન્ય ભારતીય ભાષાઓમાં પ્રશ્ન પૂછી શકો છો"
             }
         };
 
@@ -277,7 +293,7 @@
                     <div class="message-bubble ${isBot ? 'bot' : 'user'}">
                         ${isBot ? `
                             <div class="message-meta">
-                                <span class="language-tag">${currentLanguage === 'hi' ? 'Hindi' : 'English'}</span>
+                                <span class="language-tag">${currentLanguage === 'hi' ? 'Hindi' : currentLanguage === 'mr' ? 'Marathi' : currentLanguage === 'gu' ? 'Gujarati' : 'English'}</span>
                                 <span class="confidence-tag">95% confident</span>
                             </div>
                         ` : ''}
@@ -316,22 +332,46 @@
         function generateResponse(message) {
             const lower = message.toLowerCase();
             
-            if (lower.includes('fee') || lower.includes('फीस')) {
-                return currentLanguage === 'hi' 
-                    ? "फीस संबंधी जानकारी: शैक्षणिक वर्ष 2024-25 के लिए फीस ₹50,000 है। अंतिम तारीख 15 जनवरी है। ऑनलाइन भुगतान के लिए कॉलेज पोर्टल का उपयोग करें।"
-                    : "Fee Information: The academic fee for 2024-25 is ₹50,000. Last date for payment is January 15th. You can pay online through the college portal.";
-            } else if (lower.includes('scholarship') || lower.includes('छात्रवृत्ति')) {
-                return currentLanguage === 'hi'
-                    ? "छात्रवृत्ति जानकारी: मेधावी छात्रवृत्ति, आर्थिक सहायता, और विशेष श्रेणी छात्रवृत्ति उपलब्ध है। आवेदन की अंतिम तारीख 30 दिसंबर है।"
-                    : "Scholarship Information: Merit scholarships, financial aid, and category-specific scholarships are available. Application deadline is December 30th.";
-            } else if (lower.includes('timetable') || lower.includes('समय')) {
-                return currentLanguage === 'hi'
-                    ? "समय सारणी: कक्षाएं सुबह 9:00 बजे से शुरू होती हैं। नवीनतम समय सारणी कॉलेज वेबसाइट पर उपलब्ध है।"
-                    : "Timetable: Classes start at 9:00 AM. The latest timetable is available on the college website and notice board.";
+            if (lower.includes('fee') || lower.includes('फीस') || lower.includes('फी')) {
+                if (currentLanguage === 'hi') {
+                    return "फीस संबंधी जानकारी: शैक्षणिक वर्ष 2024-25 के लिए फीस ₹50,000 है। अंतिम तारीख 15 जनवरी है। ऑनलाइन भुगतान के लिए कॉलेज पोर्टल का उपयोग करें।";
+                } else if (currentLanguage === 'mr') {
+                    return "फी माहिती: 2024-25 शैक्षणिक वर्षासाठी फी ₹50,000 आहे। अंतिम तारीख 15 जानेवारी आहे। ऑनलाइन पेमेंटसाठी कॉलेज पोर्टल वापरा।";
+                } else if (currentLanguage === 'gu') {
+                    return "ફી માહિતી: 2024-25 શૈક્ષણિક વર્ષ માટે ફી ₹50,000 છે। છેલ્લી તારીખ 15 જાન્યુઆરી છે। ઓનલાઇન પેમેંટ માટે કોલેજ પોર્ટલનો ઉપયોગ કરો।";
+                } else {
+                    return "Fee Information: The academic fee for 2024-25 is ₹50,000. Last date for payment is January 15th. You can pay online through the college portal.";
+                }
+            } else if (lower.includes('scholarship') || lower.includes('छात्रवृत्ति') || lower.includes('शिष्यवृत्ती')) {
+                if (currentLanguage === 'hi') {
+                    return "छात्रवृत्ति जानकारी: मेधावी छात्रवृत्ति, आर्थिक सहायता, और विशेष श्रेणी छात्रवृत्ति उपलब्ध है। आवेदन की अंतिम तारीख 30 दिसंबर है।";
+                } else if (currentLanguage === 'mr') {
+                    return "शिष्यवृत्ती माहिती: मेधावी शिष्यवृत्ती, आर्थिक मदत आणि विशेष वर्ग शिष्यवृत्ती उपलब्ध आहेत। अर्जाची अंतिम तारीख 30 डिसेंबर आहे।";
+                } else if (currentLanguage === 'gu') {
+                    return "શિષ્યવૃત્તિ માહિતી: મેધાવી શિષ્યવૃત્તિ, આર્થિક સહાય અને વિશેષ વર્ગ શિષ્યવૃત્તિ ઉપલબ્ધ છે। અરજીની છેલ્લી તારીખ 30 ડિસેમ્બર છે।";
+                } else {
+                    return "Scholarship Information: Merit scholarships, financial aid, and category-specific scholarships are available. Application deadline is December 30th.";
+                }
+            } else if (lower.includes('timetable') || lower.includes('समय') || lower.includes('वेळापत्रक')) {
+                if (currentLanguage === 'hi') {
+                    return "समय सारणी: कक्षाएं सुबह 9:00 बजे से शुरू होती हैं। नवीनतम समय सारणी कॉलेज वेबसाइट पर उपलब्ध है।";
+                } else if (currentLanguage === 'mr') {
+                    return "वेळापत्रक: वर्ग सकाळी 9:00 वाजता सुरू होतात। नवीनतम वेळापत्रक कॉलेज वेबसाइटवर उपलब्ध आहे।";
+                } else if (currentLanguage === 'gu') {
+                    return "સમયપત્રક: વર્ગો સવારે 9:00 વાગ્યે શરૂ થાય છે। નવીનતમ સમયપત્રક કોલેજ વેબસાઇટ પર ઉપલબ્ધ છે।";
+                } else {
+                    return "Timetable: Classes start at 9:00 AM. The latest timetable is available on the college website and notice board.";
+                }
             } else {
-                return currentLanguage === 'hi'
-                    ? "मैं आपकी सहायता के लिए यहाँ हूँ। मैं फीस, छात्रवृत्ति, समय सारणी, प्रवेश, परीक्षा कार्यक्रम और सामान्य कॉलेज की जानकारी में मदद कर सकता हूँ।"
-                    : "I'm here to help you! I can assist with fees, scholarships, timetables, admissions, exam schedules, and general college information.";
+                if (currentLanguage === 'hi') {
+                    return "मैं आपकी सहायता के लिए यहाँ हूँ। मैं फीस, छात्रवृत्ति, समय सारणी, प्रवेश, परीक्षा कार्यक्रम और सामान्य कॉलेज की जानकारी में मदद कर सकता हूँ।";
+                } else if (currentLanguage === 'mr') {
+                    return "मी तुमच्या मदतीसाठी येथे आहे। मी फी, शिष्यवृत्ती, वेळापत्रक, प्रवेश, परीक्षा कार्यक्रम आणि सामान्य कॉलेज माहितीमध्ये मदत करू शकतो।";
+                } else if (currentLanguage === 'gu') {
+                    return "હું તમારી મદદ માટે અહીં છું। હું ફી, શિષ્યવૃત્તિ, સમયપત્રક, પ્રવેશ, પરીક્ષા કાર્યક્રમ અને સામાન્ય કોલેજની માહિતીમાં મદદ કરી શકું છું।";
+                } else {
+                    return "I'm here to help you! I can assist with fees, scholarships, timetables, admissions, exam schedules, and general college information.";
+                }
             }
         }
 
