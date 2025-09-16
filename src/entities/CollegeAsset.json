@@ -1,0 +1,43 @@
+{
+  "name": "CollegeAsset",
+  "type": "object",
+  "properties": {
+    "file_name": {
+      "type": "string",
+      "description": "Original name of the uploaded file."
+    },
+    "file_type": {
+      "type": "string",
+      "description": "MIME type of the file (e.g., 'application/pdf', 'image/jpeg')."
+    },
+    "file_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Public URL where the file is stored."
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional description for the asset."
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tags for easy filtering and searching."
+    }
+  },
+  "required": [
+    "file_name",
+    "file_type",
+    "file_url"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

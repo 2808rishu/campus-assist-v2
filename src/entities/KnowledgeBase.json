@@ -1,0 +1,77 @@
+{
+  "name": "KnowledgeBase",
+  "type": "object",
+  "properties": {
+    "category": {
+      "type": "string",
+      "enum": [
+        "fees",
+        "scholarships",
+        "timetable",
+        "admissions",
+        "exams",
+        "general"
+      ],
+      "description": "Category of the knowledge item"
+    },
+    "question": {
+      "type": "string",
+      "description": "The question or query"
+    },
+    "answer": {
+      "type": "string",
+      "description": "The answer or response"
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Keywords associated with this knowledge item"
+    },
+    "language": {
+      "type": "string",
+      "enum": [
+        "en",
+        "hi",
+        "mr",
+        "gu",
+        "bn",
+        "ta",
+        "te",
+        "kn"
+      ],
+      "default": "en",
+      "description": "Language of the content"
+    },
+    "priority": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 10,
+      "default": 5,
+      "description": "Priority level for matching"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this knowledge item is active"
+    },
+    "source_document": {
+      "type": "string",
+      "description": "Source document or circular reference"
+    }
+  },
+  "required": [
+    "question",
+    "answer",
+    "category"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

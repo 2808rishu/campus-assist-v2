@@ -1,0 +1,99 @@
+{
+  "name": "Conversation",
+  "type": "object",
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Unique identifier for the chat session"
+    },
+    "user_message": {
+      "type": "string",
+      "description": "The message sent by the user"
+    },
+    "bot_response": {
+      "type": "string",
+      "description": "The chatbot's response"
+    },
+    "detected_language": {
+      "type": "string",
+      "enum": [
+        "en",
+        "hi",
+        "mr",
+        "gu",
+        "bn",
+        "ta",
+        "te",
+        "kn"
+      ],
+      "default": "en",
+      "description": "Language detected from user message"
+    },
+    "intent_category": {
+      "type": "string",
+      "enum": [
+        "fees",
+        "scholarships",
+        "timetable",
+        "admissions",
+        "exams",
+        "general",
+        "unknown"
+      ],
+      "default": "general",
+      "description": "Categorized intent of the user query"
+    },
+    "confidence_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Confidence score of the bot response"
+    },
+    "escalated_to_human": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the conversation was escalated to human support"
+    },
+    "user_rating": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "User rating for the response"
+    },
+    "response_time_ms": {
+      "type": "number",
+      "description": "Time taken to generate response in milliseconds"
+    }
+  },
+  "required": [
+    "session_id",
+    "user_message",
+    "bot_response"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
