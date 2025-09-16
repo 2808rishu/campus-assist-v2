@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Assist v2.0 - Multilingual Campus Chatbot | SIH 2024</title>
+    <meta name="description" content="Smart India Hackathon 2024 - Multilingual Campus Assistant for student queries in 8 Indian languages">
+    <meta name="keywords" content="Smart India Hackathon, SIH 2024, Campus Assistant, Multilingual Chatbot, Hindi, English, Student Queries">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; }
+        .chat-container { height: 100vh; display: flex; background: #f3f4f6; }
+        .sidebar { background: white; border-right: 1px solid #e5e7eb; transition: all 0.3s; width: 64px; }
+        .sidebar.expanded { width: 256px; }
+        .sidebar-header { padding: 16px; display: flex; align-items: center; gap: 12px; }
+        .menu-btn { padding: 8px; border: none; background: none; border-radius: 8px; cursor: pointer; }
+        .menu-btn:hover { background: #f3f4f6; }
+        .nav-item { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px; margin: 4px 8px; border: none; background: none; border-radius: 8px; cursor: pointer; color: #6b7280; }
+        .nav-item.active { background: #eff6ff; color: #2563eb; }
+        .nav-item:hover { background: #f3f4f6; }
+        .main-chat { flex: 1; display: flex; flex-direction: column; }
+        .chat-header { background: white; border-bottom: 1px solid #e5e7eb; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .header-controls { display: flex; align-items: center; gap: 12px; }
+        .language-selector { display: flex; align-items: center; gap: 8px; }
+        .language-selector select { border: 1px solid #d1d5db; border-radius: 6px; padding: 4px 12px; font-size: 14px; }
+        .human-help-btn { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 8px; background: white; cursor: pointer; font-size: 14px; }
+        .human-help-btn:hover { background: #f9fafb; }
+        .messages-area { flex: 1; overflow-y: auto; padding: 16px; }
+        .message { display: flex; gap: 12px; margin-bottom: 16px; }
+        .message.user { justify-content: flex-end; }
+        .message-content { display: flex; gap: 12px; max-width: 80%; }
+        .message.user .message-content { flex-direction: row-reverse; }
+        .avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .avatar.bot { background: #dbeafe; color: #2563eb; }
+        .avatar.user { background: #f3f4f6; color: #6b7280; }
+        .message-bubble { border-radius: 16px; padding: 12px 16px; }
+        .message-bubble.bot { background: white; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .message-bubble.user { background: #2563eb; color: white; }
+        .message-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .language-tag, .confidence-tag { font-size: 12px; padding: 2px 8px; border-radius: 4px; }
+        .language-tag { background: #f3f4f6; color: #374151; }
+        .confidence-tag { background: #dbeafe; color: #1d4ed8; }
+        .message-text { font-size: 14px; line-height: 1.5; margin-bottom: 4px; }
+        .message-time { font-size: 12px; color: #6b7280; }
+        .message.user .message-time { color: #bfdbfe; }
+        .quick-actions { padding: 16px; }
+        .quick-actions-panel { background: white; border-radius: 12px; padding: 16px; border: 1px solid #e5e7eb; }
+        .quick-actions-title { font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 12px; }
+        .actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+        .action-btn { display: flex; align-items: center; gap: 8px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer; text-align: left; transition: all 0.2s; }
+        .action-btn:hover { background: #eff6ff; border-color: #93c5fd; }
+        .action-icon { color: #2563eb; }
+        .action-label { font-size: 12px; font-weight: 500; color: #374151; }
+        .input-area { background: white; border-top: 1px solid #e5e7eb; padding: 16px; }
+        .input-container { display: flex; gap: 8px; }
+        .message-input { flex: 1; border: 1px solid #d1d5db; border-radius: 8px; padding: 12px 16px; font-size: 14px; }
+        .message-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .send-btn { padding: 12px 16px; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer; }
+        .send-btn:hover { background: #1d4ed8; }
+        .send-btn:disabled { background: #9ca3af; cursor: not-allowed; }
+        .input-hint { font-size: 12px; color: #6b7280; text-align: center; margin-top: 8px; }
+        .loading { display: flex; justify-content: flex-start; }
+        .loading-bubble { background: white; border: 1px solid #e5e7eb; border-radius: 16px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .loading-content { display: flex; align-items: center; gap: 8px; }
+        .spinner { width: 16px; height: 16px; border: 2px solid #e5e7eb; border-top: 2px solid #2563eb; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                <h2 style="font-weight: bold; color: #111827; display: none;" id="sidebarTitle">Campus Assist</h2>
+            </div>
+            <nav style="padding: 0 8px;">
+                <button class="nav-item active">
+                    💬 <span style="display: none;" class="nav-text">Chat</span>
+                </button>
+                <button class="nav-item">
+                    📊 <span style="display: none;" class="nav-text">Analytics</span>
+                </button>
+                <button class="nav-item">
+                    👥 <span style="display: none;" class="nav-text">Admin</span>
+                </button>
+                <button class="nav-item">
+                    ⚙️ <span style="display: none;" class="nav-text">Settings</span>
+                </button>
+            </nav>
+        </div>
+        
+        <!-- Main Chat Area -->
+        <div class="main-chat">
+            <!-- Header -->
+            <div class="chat-header">
+                <div>
+                    <h1 style="font-size: 20px; font-weight: bold; color: #111827;">Multilingual Campus Assistant</h1>
+                    <p style="font-size: 14px; color: #6b7280;">Smart India Hackathon 2024 - Campus Query Solution</p>
+                </div>
+                <div class="header-controls">
+                    <div class="language-selector">
+                        🌐
+                        <select onchange="changeLanguage(this.value)" id="languageSelect">
+                            <option value="en">English</option>
+                            <option value="hi">हिंदी</option>
+                            <option value="mr">मराठी</option>
+                            <option value="gu">ગુજરાતી</option>
+                            <option value="bn">বাংলা</option>
+                            <option value="ta">தமிழ்</option>
+                            <option value="te">తెలుగు</option>
+                            <option value="kn">ಕನ್ನಡ</option>
+                        </select>
+                    </div>
+                    <button class="human-help-btn">📞 Human Help</button>
+                </div>
+            </div>
+            
+            <!-- Messages Area -->
+            <div class="messages-area" id="messagesArea">
+                <div class="message bot">
+                    <div class="message-content">
+                        <div class="avatar bot">🤖</div>
+                        <div class="message-bubble bot">
+                            <div class="message-meta">
+                                <span class="language-tag">English</span>
+                                <span class="confidence-tag">100% confident</span>
+                            </div>
+                            <div class="message-text" id="greetingText">Hello! I'm your multilingual campus assistant. I can help you with fees, scholarships, timetables, admissions, and other college information. You can talk to me in Hindi, English, or any of our supported regional languages!</div>
+                            <div class="message-time" id="greetingTime"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="quick-actions" id="quickActions">
+                <div class="quick-actions-panel">
+                    <h3 class="quick-actions-title" id="quickTitle">Quick Help</h3>
+                    <div class="actions-grid">
+                        <button class="action-btn" onclick="sendQuickMessage('Tell me about fee structure and payment deadlines')">
+                            <span class="action-icon">💳</span>
+                            <span class="action-label" id="action1">Fee Information</span>
+                        </button>
+                        <button class="action-btn" onclick="sendQuickMessage('What scholarships are available for students?')">
+                            <span class="action-icon">🎓</span>
+                            <span class="action-label" id="action2">Scholarships</span>
+                        </button>
+                        <button class="action-btn" onclick="sendQuickMessage('Show me the current class timetable and schedule')">
+                            <span class="action-icon">📅</span>
+                            <span class="action-label" id="action3">Timetable</span>
+                        </button>
+                        <button class="action-btn" onclick="sendQuickMessage('How do I apply for admission? What are the requirements?')">
+                            <span class="action-icon">📄</span>
+                            <span class="action-label" id="action4">Admissions</span>
+                        </button>
+                        <button class="action-btn" onclick="sendQuickMessage('When are the upcoming exams and results?')">
+                            <span class="action-icon">⏰</span>
+                            <span class="action-label" id="action5">Exam Schedule</span>
+                        </button>
+                        <button class="action-btn" onclick="sendQuickMessage('What can you help me with? Show me all services')">
+                            <span class="action-icon">❓</span>
+                            <span class="action-label" id="action6">General Help</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Input Area -->
+            <div class="input-area">
+                <div class="input-container">
+                    <input type="text" id="messageInput" class="message-input" placeholder="Type your question here..." onkeypress="handleKeyPress(event)">
+                    <button class="send-btn" onclick="sendMessage()">➤</button>
+                </div>
+                <p class="input-hint" id="inputHint">You can ask questions in Hindi, English, or other Indian languages</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLanguage = 'en';
+        let sidebarExpanded = false;
+        let messageCount = 1;
+        
+        const languages = {
+            en: {
+                greeting: "Hello! I'm your multilingual campus assistant. I can help you with fees, scholarships, timetables, admissions, and other college information. You can talk to me in Hindi, English, or any of our supported regional languages!",
+                thinking: "Processing your query...",
+                quickTitle: "Quick Help",
+                actions: ["Fee Information", "Scholarships", "Timetable", "Admissions", "Exam Schedule", "General Help"],
+                placeholder: "Type your question here...",
+                hint: "You can ask questions in Hindi, English, or other Indian languages"
+            },
+            hi: {
+                greeting: "नमस्ते! मैं आपका बहुभाषी कैंपस असिस्टेंट हूँ। मैं फीस, छात्रवृत्ति, समय सारणी, प्रवेश और अन्य कॉलेज की जानकारी में आपकी मदद कर सकता हूँ। आप हिंदी, अंग्रेजी या हमारी किसी भी समर्थित क्षेत्रीय भाषा में मुझसे बात कर सकते हैं!",
+                thinking: "आपके प्रश्न को समझ रहा हूँ...",
+                quickTitle: "त्वरित सहायता",
+                actions: ["फीस की जानकारी", "छात्रवृत्ति", "समय सारणी", "प्रवेश", "परीक्षा समय", "सामान्य सहायता"],
+                placeholder: "यहाँ अपना प्रश्न लिखें...",
+                hint: "आप हिंदी, अंग्रेजी या अन्य भारतीय भाषाओं में प्रश्न पूछ सकते हैं"
+            }
+        };
+
+        function toggleSidebar() {
+            sidebarExpanded = !sidebarExpanded;
+            const sidebar = document.getElementById('sidebar');
+            const title = document.getElementById('sidebarTitle');
+            const navTexts = document.querySelectorAll('.nav-text');
+            
+            if (sidebarExpanded) {
+                sidebar.classList.add('expanded');
+                title.style.display = 'block';
+                navTexts.forEach(text => text.style.display = 'inline');
+            } else {
+                sidebar.classList.remove('expanded');
+                title.style.display = 'none';
+                navTexts.forEach(text => text.style.display = 'none');
+            }
+        }
+
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            const langData = languages[lang] || languages.en;
+            
+            // Update greeting
+            document.getElementById('greetingText').textContent = langData.greeting;
+            
+            // Update quick actions
+            document.getElementById('quickTitle').textContent = langData.quickTitle;
+            for (let i = 1; i <= 6; i++) {
+                document.getElementById(`action${i}`).textContent = langData.actions[i-1];
+            }
+            
+            // Update placeholder and hint
+            document.getElementById('messageInput').placeholder = langData.placeholder;
+            document.getElementById('inputHint').textContent = langData.hint;
+        }
+
+        function sendQuickMessage(message) {
+            sendMessage(message);
+            document.getElementById('quickActions').style.display = 'none';
+        }
+
+        function sendMessage(customMessage) {
+            const input = document.getElementById('messageInput');
+            const message = customMessage || input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, false);
+            input.value = '';
+            
+            // Show loading
+            showLoading();
+            
+            // Simulate bot response
+            setTimeout(() => {
+                hideLoading();
+                const response = generateResponse(message);
+                addMessage(response, true);
+            }, 1500);
+        }
+
+        function addMessage(text, isBot) {
+            const messagesArea = document.getElementById('messagesArea');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isBot ? 'bot' : 'user'}`;
+            
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <div class="avatar ${isBot ? 'bot' : 'user'}">${isBot ? '🤖' : '👤'}</div>
+                    <div class="message-bubble ${isBot ? 'bot' : 'user'}">
+                        ${isBot ? `
+                            <div class="message-meta">
+                                <span class="language-tag">${currentLanguage === 'hi' ? 'Hindi' : 'English'}</span>
+                                <span class="confidence-tag">95% confident</span>
+                            </div>
+                        ` : ''}
+                        <div class="message-text">${text}</div>
+                        <div class="message-time">${time}</div>
+                    </div>
+                </div>
+            `;
+            
+            messagesArea.appendChild(messageDiv);
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+
+        function showLoading() {
+            const messagesArea = document.getElementById('messagesArea');
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'loadingMessage';
+            loadingDiv.className = 'loading';
+            loadingDiv.innerHTML = `
+                <div class="loading-bubble">
+                    <div class="loading-content">
+                        <div class="spinner"></div>
+                        <span>${languages[currentLanguage]?.thinking || 'Processing your query...'}</span>
+                    </div>
+                </div>
+            `;
+            messagesArea.appendChild(loadingDiv);
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+
+        function hideLoading() {
+            const loading = document.getElementById('loadingMessage');
+            if (loading) loading.remove();
+        }
+
+        function generateResponse(message) {
+            const lower = message.toLowerCase();
+            
+            if (lower.includes('fee') || lower.includes('फीस')) {
+                return currentLanguage === 'hi' 
+                    ? "फीस संबंधी जानकारी: शैक्षणिक वर्ष 2024-25 के लिए फीस ₹50,000 है। अंतिम तारीख 15 जनवरी है। ऑनलाइन भुगतान के लिए कॉलेज पोर्टल का उपयोग करें।"
+                    : "Fee Information: The academic fee for 2024-25 is ₹50,000. Last date for payment is January 15th. You can pay online through the college portal.";
+            } else if (lower.includes('scholarship') || lower.includes('छात्रवृत्ति')) {
+                return currentLanguage === 'hi'
+                    ? "छात्रवृत्ति जानकारी: मेधावी छात्रवृत्ति, आर्थिक सहायता, और विशेष श्रेणी छात्रवृत्ति उपलब्ध है। आवेदन की अंतिम तारीख 30 दिसंबर है।"
+                    : "Scholarship Information: Merit scholarships, financial aid, and category-specific scholarships are available. Application deadline is December 30th.";
+            } else if (lower.includes('timetable') || lower.includes('समय')) {
+                return currentLanguage === 'hi'
+                    ? "समय सारणी: कक्षाएं सुबह 9:00 बजे से शुरू होती हैं। नवीनतम समय सारणी कॉलेज वेबसाइट पर उपलब्ध है।"
+                    : "Timetable: Classes start at 9:00 AM. The latest timetable is available on the college website and notice board.";
+            } else {
+                return currentLanguage === 'hi'
+                    ? "मैं आपकी सहायता के लिए यहाँ हूँ। मैं फीस, छात्रवृत्ति, समय सारणी, प्रवेश, परीक्षा कार्यक्रम और सामान्य कॉलेज की जानकारी में मदद कर सकता हूँ।"
+                    : "I'm here to help you! I can assist with fees, scholarships, timetables, admissions, exam schedules, and general college information.";
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Initialize with current time
+        document.getElementById('greetingTime').textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    </script>
+</body>
+</html>

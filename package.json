@@ -5,13 +5,14 @@
   "homepage": "https://2808rishu.github.io/campus-assist-v2",
   "private": true,
   "dependencies": {
+    "date-fns": "^2.29.0",
+    "framer-motion": "^10.0.0",
+    "lucide-react": "^0.263.0",
+    "prompts": "^2.4.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.0",
-    "react-scripts": "5.0.1",
-    "framer-motion": "^10.0.0",
-    "lucide-react": "^0.263.0",
-    "date-fns": "^2.29.0",
+    "react-scripts": "^0.0.0",
     "recharts": "^2.5.0"
   },
   "scripts": {
