@@ -77,236 +77,23 @@
                 <h2 style="font-weight: bold; color: #111827; display: none;" id="sidebarTitle">Campus Assist</h2>
             </div>
             <nav style="padding: 0 8px;">
-                <button class="nav-item active" id="chatNav" onclick="showPage('chat')">
+                <button class="nav-item active">
                     💬 <span style="display: none;" class="nav-text">Chat</span>
                 </button>
-                <button class="nav-item" id="analyticsNav" onclick="showPage('analytics')">
+                <button class="nav-item">
                     📊 <span style="display: none;" class="nav-text">Analytics</span>
                 </button>
-                <button class="nav-item" id="adminNav" onclick="showPage('admin')">
+                <button class="nav-item">
                     👥 <span style="display: none;" class="nav-text">Admin</span>
                 </button>
-                <button class="nav-item" id="settingsNav" onclick="showPage('settings')">
+                <button class="nav-item">
                     ⚙️ <span style="display: none;" class="nav-text">Settings</span>
                 </button>
             </nav>
         </div>
         
         <!-- Main Chat Area -->
-        <div class="main-chat" id="chatPage">
-            <!-- Header -->
-            <div class="chat-header">
-                <div>
-                    <h1 style="font-size: 20px; font-weight: bold; color: #111827;">Multilingual Campus Assistant</h1>
-                    <p style="font-size: 14px; color: #6b7280;">Smart India Hackathon 2024 - Campus Query Solution</p>
-                </div>
-                <div class="header-controls">
-                    <div class="language-selector">
-                        🌐
-                        <select onchange="changeLanguage(this.value)" id="languageSelect">
-                            <option value="en">English</option>
-                            <option value="hi">हिंदी</option>
-                            <option value="mr">मराठी</option>
-                            <option value="gu">ગુજરાતી</option>
-                            <option value="bn">বাংলা</option>
-                            <option value="ta">தமிழ்</option>
-                            <option value="te">తెలుగు</option>
-                            <option value="kn">ಕನ್ನಡ</option>
-                        </select>
-                    </div>
-                    <button class="human-help-btn">📞 Human Help</button>
-                </div>
-            </div>
-            
-            <!-- Messages Area -->
-            <div class="messages-area" id="messagesArea">
-                <div class="message bot">
-                    <div class="message-content">
-                        <div class="avatar bot">🤖</div>
-                        <div class="message-bubble bot">
-                            <div class="message-meta">
-                                <span class="language-tag">English</span>
-                                <span class="confidence-tag">100% confident</span>
-                            </div>
-                            <div class="message-text" id="greetingText">Hello! I'm your multilingual campus assistant. I can help you with fees, scholarships, timetables, admissions, and other college information. You can talk to me in Hindi, English, or any of our supported regional languages!</div>
-                            <div class="message-time" id="greetingTime"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Quick Actions -->
-            <div class="quick-actions" id="quickActions">
-                <div class="quick-actions-panel">
-                    <h3 class="quick-actions-title" id="quickTitle">Quick Help</h3>
-                    <div class="actions-grid">
-                        <button class="action-btn" onclick="sendQuickMessage('Tell me about fee structure and payment deadlines')">
-                            <span class="action-icon">💳</span>
-                            <span class="action-label" id="action1">Fee Information</span>
-                        </button>
-                        <button class="action-btn" onclick="sendQuickMessage('What scholarships are available for students?')">
-                            <span class="action-icon">🎓</span>
-                            <span class="action-label" id="action2">Scholarships</span>
-                        </button>
-                        <button class="action-btn" onclick="sendQuickMessage('Show me the current class timetable and schedule')">
-                            <span class="action-icon">📅</span>
-                            <span class="action-label" id="action3">Timetable</span>
-                        </button>
-                        <button class="action-btn" onclick="sendQuickMessage('How do I apply for admission? What are the requirements?')">
-                            <span class="action-icon">📄</span>
-                            <span class="action-label" id="action4">Admissions</span>
-                        </button>
-                        <button class="action-btn" onclick="sendQuickMessage('When are the upcoming exams and results?')">
-                            <span class="action-icon">⏰</span>
-                            <span class="action-label" id="action5">Exam Schedule</span>
-                        </button>
-                        <button class="action-btn" onclick="sendQuickMessage('What can you help me with? Show me all services')">
-                            <span class="action-icon">❓</span>
-                            <span class="action-label" id="action6">General Help</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Input Area -->
-            <div class="input-area">
-                <div class="input-container">
-                    <input type="text" id="messageInput" class="message-input" placeholder="Type your question here..." onkeypress="handleKeyPress(event)">
-                    <button class="send-btn" onclick="sendMessage()">➤</button>
-                </div>
-                <p class="input-hint" id="inputHint">You can ask questions in Hindi, English, or other Indian languages</p>
-            </div>
-        </div>
-        
-        <!-- Analytics Page -->
-        <div class="main-chat" id="analyticsPage" style="display: none;">
-            <div class="chat-header">
-                <div>
-                    <h1 style="font-size: 20px; font-weight: bold; color: #111827;">Analytics Dashboard</h1>
-                    <p style="font-size: 14px; color: #6b7280;">Monitor chatbot performance and user interactions</p>
-                </div>
-            </div>
-            <div class="page-content" style="padding: 20px; overflow-y: auto; flex: 1;">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
-                    <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e5e7eb;">
-                        <h3 style="color: #374151; margin-bottom: 10px;">Total Conversations</h3>
-                        <div style="font-size: 32px; font-weight: bold; color: #111827;">247</div>
-                        <p style="color: #10b981; font-size: 12px;">+12% from last week</p>
-                    </div>
-                    <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e5e7eb;">
-                        <h3 style="color: #374151; margin-bottom: 10px;">Active Sessions</h3>
-                        <div style="font-size: 32px; font-weight: bold; color: #111827;">12</div>
-                        <p style="color: #10b981; font-size: 12px;">+8% from last week</p>
-                    </div>
-                    <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e5e7eb;">
-                        <h3 style="color: #374151; margin-bottom: 10px;">Avg Response Time</h3>
-                        <div style="font-size: 32px; font-weight: bold; color: #111827;">0.8s</div>
-                        <p style="color: #ef4444; font-size: 12px;">-5% from last week</p>
-                    </div>
-                    <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e5e7eb;">
-                        <h3 style="color: #374151; margin-bottom: 10px;">Satisfaction Rate</h3>
-                        <div style="font-size: 32px; font-weight: bold; color: #111827;">94.2%</div>
-                        <p style="color: #10b981; font-size: 12px;">+3% from last week</p>
-                    </div>
-                </div>
-                <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e5e7eb;">
-                    <h3 style="color: #374151; margin-bottom: 15px;">Language Usage Distribution</h3>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <span style="padding: 5px 10px; background: #eff6ff; color: #2563eb; border-radius: 20px; font-size: 12px;">English: 45%</span>
-                        <span style="padding: 5px 10px; background: #f0fdf4; color: #16a34a; border-radius: 20px; font-size: 12px;">Hindi: 25%</span>
-                        <span style="padding: 5px 10px; background: #fef7ff; color: #a855f7; border-radius: 20px; font-size: 12px;">Marathi: 15%</span>
-                        <span style="padding: 5px 10px; background: #fffbeb; color: #d97706; border-radius: 20px; font-size: 12px;">Gujarati: 10%</span>
-                        <span style="padding: 5px 10px; background: #fef2f2; color: #dc2626; border-radius: 20px; font-size: 12px;">Others: 5%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Admin Page -->
-        <div class="main-chat" id="adminPage" style="display: none;">
-            <div class="chat-header">
-                <div>
-                    <h1 style="font-size: 20px; font-weight: bold; color: #111827;">Knowledge Base Management</h1>
-                    <p style="font-size: 14px; color: #6b7280;">Manage FAQs and responses for the chatbot</p>
-                </div>
-                <button style="background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer;">+ Add New Item</button>
-            </div>
-            <div class="page-content" style="padding: 20px; overflow-y: auto; flex: 1;">
-                <div style="background: white; border-radius: 12px; border: 1px solid #e5e7eb; padding: 20px;">
-                    <h3 style="margin-bottom: 15px;">Search & Filter</h3>
-                    <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-                        <input type="text" placeholder="Search questions or answers..." style="flex: 1; border: 1px solid #d1d5db; border-radius: 8px; padding: 8px 12px;">
-                        <select style="border: 1px solid #d1d5db; border-radius: 8px; padding: 8px 12px;">
-                            <option>All Categories</option>
-                            <option>Fees</option>
-                            <option>Admissions</option>
-                            <option>Scholarships</option>
-                        </select>
-                        <select style="border: 1px solid #d1d5db; border-radius: 8px; padding: 8px 12px;">
-                            <option>All Languages</option>
-                            <option>English</option>
-                            <option>Hindi</option>
-                            <option>Marathi</option>
-                        </select>
-                    </div>
-                    <div style="text-align: center; color: #6b7280; padding: 40px;">
-                        📋 No knowledge base entries found. Click "Add New Item" to create your first FAQ.
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Settings Page -->
-        <div class="main-chat" id="settingsPage" style="display: none;">
-            <div class="chat-header">
-                <div>
-                    <h1 style="font-size: 20px; font-weight: bold; color: #111827;">Chatbot Settings</h1>
-                    <p style="font-size: 14px; color: #6b7280;">Configure your multilingual campus assistant</p>
-                </div>
-                <button style="background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer;">💾 Save Settings</button>
-            </div>
-            <div class="page-content" style="padding: 20px; overflow-y: auto; flex: 1;">
-                <div style="background: white; border-radius: 12px; border: 1px solid #e5e7eb; padding: 30px; max-width: 800px;">
-                    <h3 style="margin-bottom: 20px; color: #374151;">⚙️ General Settings</h3>
-                    <div style="display: grid; gap: 20px;">
-                        <div>
-                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Chatbot Name</label>
-                            <input type="text" value="Campus Assistant" style="width: 100%; border: 1px solid #d1d5db; border-radius: 8px; padding: 10px;">
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Default Language</label>
-                            <select style="width: 100%; border: 1px solid #d1d5db; border-radius: 8px; padding: 10px;">
-                                <option>English</option>
-                                <option>Hindi</option>
-                                <option>Marathi</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Welcome Message</label>
-                            <textarea style="width: 100%; border: 1px solid #d1d5db; border-radius: 8px; padding: 10px; rows: 3;">Hello! I'm your campus assistant. I can help you with fees, scholarships, timetables, and other college information.</textarea>
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Max Response Length</label>
-                            <input type="number" value="500" style="width: 100%; border: 1px solid #d1d5db; border-radius: 8px; padding: 10px;">
-                            <p style="font-size: 12px; color: #6b7280; margin-top: 5px;">Maximum characters in chatbot responses</p>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <label style="font-weight: 500;">Enable Multilingual Support</label>
-                                <p style="font-size: 12px; color: #6b7280;">Allow users to chat in multiple languages</p>
-                            </div>
-                            <input type="checkbox" checked style="transform: scale(1.5);">
-                        </div>
-                        <div style="padding: 15px; background: #fef3cd; border: 1px solid #fbbf24; border-radius: 8px;">
-                            <h4 style="color: #92400e; margin-bottom: 5px;">🔑 API Configuration</h4>
-                            <p style="font-size: 12px; color: #92400e; margin-bottom: 10px;">Configure translation APIs for advanced multilingual support</p>
-                            <input type="password" placeholder="Enter Google Translate API Key" style="width: 100%; border: 1px solid #d1d5db; border-radius: 6px; padding: 8px; margin-bottom: 8px;">
-                            <input type="password" placeholder="Enter OpenAI API Key (Optional)" style="width: 100%; border: 1px solid #d1d5db; border-radius: 6px; padding: 8px;">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div class="main-chat">
             <!-- Header -->
             <div class="chat-header">
                 <div>
@@ -396,9 +183,6 @@
         let currentLanguage = 'en';
         let sidebarExpanded = false;
         let messageCount = 1;
-        let currentPage = 'chat';
-        let translateApiKey = '';
-        let openaiApiKey = '';
         
         const languages = {
             en: {
@@ -416,112 +200,8 @@
                 actions: ["फीस की जानकारी", "छात्रवृत्ति", "समय सारणी", "प्रवेश", "परीक्षा समय", "सामान्य सहायता"],
                 placeholder: "यहाँ अपना प्रश्न लिखें...",
                 hint: "आप हिंदी, अंग्रेजी या अन्य भारतीय भाषाओं में प्रश्न पूछ सकते हैं"
-            },
-            mr: {
-                greeting: "नमस्कार! मी तुमचा बहुभाषिक कॅम्पस असिस्टंट आहे। मी फी, शिष्यवृत्ती, वेळापत्रक, प्रवेश आणि इतर महाविद्यालयीन माहितीमध्ये तुमची मदत करू शकतो। तुम्ही मराठी, इंग्रजी किंवा आमच्या कोणत्याही समर्थित प्रादेशिक भाषेत माझ्याशी बोलू शकता!",
-                thinking: "तुमचा प्रश्न समजून घेत आहे...",
-                quickTitle: "त्वरित मदत",
-                actions: ["फी माहिती", "शिष्यवृत्ती", "वेळापत्रक", "प्रवेश", "परीक्षा वेळ", "सामान्य मदत"],
-                placeholder: "येथे तुमचा प्रश्न लिहा...",
-                hint: "तुम्ही मराठी, इंग्रजी किंवा इतर भारतीय भाषांमध्ये प्रश्न विचारू शकता"
-            },
-            gu: {
-                greeting: "નમસ્તે! હું તમારો બહુભાષી કેમ્પસ આસિસ્ટન્ટ છું। હું ફી, શિષ્યવૃત્તિ, સમયપત્રક, પ્રવેશ અને અન્ય કોલેજની માહિતીમાં તમારી મદદ કરી શકું છું। તમે ગુજરાતી, અંગ્રેજી અથવા અમારી કોઈપણ સમર્થિત પ્રાદેશિક ભાષામાં મારી સાથે વાત કરી શકો છો!",
-                thinking: "તમારા પ્રશ્નને સમજી રહ્યો છું...",
-                quickTitle: "ઝડપી મદદ",
-                actions: ["ફી માહિતી", "શિષ્યવૃત્તિ", "સમયપત્રક", "પ્રવેશ", "પરીક્ષા સમય", "સામાન્ય મદદ"],
-                placeholder: "અહીં તમારો પ્રશ્ન લખો...",
-                hint: "તમે ગુજરાતી, અંગ્રેજી અથવા અન્ય ભારતીય ભાષાઓમાં પ્રશ્ન પૂછી શકો છો"
             }
         };
-
-        function showPage(page) {
-            // Hide all pages
-            document.getElementById('chatPage').style.display = 'none';
-            document.getElementById('analyticsPage').style.display = 'none';
-            document.getElementById('adminPage').style.display = 'none';
-            document.getElementById('settingsPage').style.display = 'none';
-            
-            // Remove active class from all nav items
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            
-            // Show selected page and activate nav
-            document.getElementById(page + 'Page').style.display = 'flex';
-            document.getElementById(page + 'Nav').classList.add('active');
-            currentPage = page;
-        }
-        
-        async function translateText(text, targetLang) {
-            if (!translateApiKey) {
-                return text; // Return original if no API key
-            }
-            
-            try {
-                const response = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${translateApiKey}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        q: text,
-                        target: targetLang,
-                        format: 'text'
-                    })
-                });
-                
-                const data = await response.json();
-                return data.data.translations[0].translatedText;
-            } catch (error) {
-                console.error('Translation error:', error);
-                return text; // Return original on error
-            }
-        }
-        
-        async function detectAndTranslateToEnglish(text) {
-            if (!translateApiKey) {
-                return text; // Return original if no API key
-            }
-            
-            try {
-                // First detect language
-                const detectResponse = await fetch(`https://translation.googleapis.com/language/translate/v2/detect?key=${translateApiKey}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        q: text
-                    })
-                });
-                
-                const detectData = await detectResponse.json();
-                const detectedLang = detectData.data.detections[0][0].language;
-                
-                // If already English, return as is
-                if (detectedLang === 'en') {
-                    return text;
-                }
-                
-                // Translate to English
-                const translateResponse = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${translateApiKey}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        q: text,
-                        target: 'en',
-                        format: 'text'
-                    })
-                });
-                
-                const translateData = await translateResponse.json();
-                return translateData.data.translations[0].translatedText;
-            } catch (error) {
-                console.error('Translation error:', error);
-                return text; // Return original on error
-            }
-        }
 
         function toggleSidebar() {
             sidebarExpanded = !sidebarExpanded;
@@ -563,7 +243,7 @@
             document.getElementById('quickActions').style.display = 'none';
         }
 
-        async function sendMessage(customMessage) {
+        function sendMessage(customMessage) {
             const input = document.getElementById('messageInput');
             const message = customMessage || input.value.trim();
             
@@ -576,39 +256,12 @@
             // Show loading
             showLoading();
             
-            try {
-                // Step 1: Translate user input to English for database lookup
-                const englishQuery = await detectAndTranslateToEnglish(message);
-                
-                // Step 2: Get response from database (simulate for now)
-                const englishResponse = generateResponse(englishQuery);
-                
-                // Step 3: Translate response to user's selected language
-                const langCode = getLangCode(currentLanguage);
-                const translatedResponse = langCode === 'en' ? englishResponse : await translateText(englishResponse, langCode);
-                
+            // Simulate bot response
+            setTimeout(() => {
                 hideLoading();
-                addMessage(translatedResponse, true);
-            } catch (error) {
-                hideLoading();
-                console.error('Message processing error:', error);
-                const fallbackResponse = generateResponse(message);
-                addMessage(fallbackResponse, true);
-            }
-        }
-        
-        function getLangCode(language) {
-            const langMap = {
-                'en': 'en',
-                'hi': 'hi', 
-                'mr': 'mr',
-                'gu': 'gu',
-                'bn': 'bn',
-                'ta': 'ta',
-                'te': 'te',
-                'kn': 'kn'
-            };
-            return langMap[language] || 'en';
+                const response = generateResponse(message);
+                addMessage(response, true);
+            }, 1500);
         }
 
         function addMessage(text, isBot) {
@@ -624,7 +277,7 @@
                     <div class="message-bubble ${isBot ? 'bot' : 'user'}">
                         ${isBot ? `
                             <div class="message-meta">
-                                <span class="language-tag">${currentLanguage === 'hi' ? 'Hindi' : currentLanguage === 'mr' ? 'Marathi' : currentLanguage === 'gu' ? 'Gujarati' : 'English'}</span>
+                                <span class="language-tag">${currentLanguage === 'hi' ? 'Hindi' : 'English'}</span>
                                 <span class="confidence-tag">95% confident</span>
                             </div>
                         ` : ''}
@@ -663,46 +316,22 @@
         function generateResponse(message) {
             const lower = message.toLowerCase();
             
-            if (lower.includes('fee') || lower.includes('फीस') || lower.includes('फी')) {
-                if (currentLanguage === 'hi') {
-                    return "फीस संबंधी जानकारी: शैक्षणिक वर्ष 2024-25 के लिए फीस ₹50,000 है। अंतिम तारीख 15 जनवरी है। ऑनलाइन भुगतान के लिए कॉलेज पोर्टल का उपयोग करें।";
-                } else if (currentLanguage === 'mr') {
-                    return "फी माहिती: 2024-25 शैक्षणिक वर्षासाठी फी ₹50,000 आहे। अंतिम तारीख 15 जानेवारी आहे। ऑनलाइन पेमेंटसाठी कॉलेज पोर्टल वापरा।";
-                } else if (currentLanguage === 'gu') {
-                    return "ફી માહિતી: 2024-25 શૈક્ષણિક વર્ષ માટે ફી ₹50,000 છે। છેલ્લી તારીખ 15 જાન્યુઆરી છે। ઓનલાઇન પેમેંટ માટે કોલેજ પોર્ટલનો ઉપયોગ કરો।";
-                } else {
-                    return "Fee Information: The academic fee for 2024-25 is ₹50,000. Last date for payment is January 15th. You can pay online through the college portal.";
-                }
-            } else if (lower.includes('scholarship') || lower.includes('छात्रवृत्ति') || lower.includes('शिष्यवृत्ती')) {
-                if (currentLanguage === 'hi') {
-                    return "छात्रवृत्ति जानकारी: मेधावी छात्रवृत्ति, आर्थिक सहायता, और विशेष श्रेणी छात्रवृत्ति उपलब्ध है। आवेदन की अंतिम तारीख 30 दिसंबर है।";
-                } else if (currentLanguage === 'mr') {
-                    return "शिष्यवृत्ती माहिती: मेधावी शिष्यवृत्ती, आर्थिक मदत आणि विशेष वर्ग शिष्यवृत्ती उपलब्ध आहेत। अर्जाची अंतिम तारीख 30 डिसेंबर आहे।";
-                } else if (currentLanguage === 'gu') {
-                    return "શિષ્યવૃત્તિ માહિતી: મેધાવી શિષ્યવૃત્તિ, આર્થિક સહાય અને વિશેષ વર્ગ શિષ્યવૃત્તિ ઉપલબ્ધ છે। અરજીની છેલ્લી તારીખ 30 ડિસેમ્બર છે।";
-                } else {
-                    return "Scholarship Information: Merit scholarships, financial aid, and category-specific scholarships are available. Application deadline is December 30th.";
-                }
-            } else if (lower.includes('timetable') || lower.includes('समय') || lower.includes('वेळापत्रक')) {
-                if (currentLanguage === 'hi') {
-                    return "समय सारणी: कक्षाएं सुबह 9:00 बजे से शुरू होती हैं। नवीनतम समय सारणी कॉलेज वेबसाइट पर उपलब्ध है।";
-                } else if (currentLanguage === 'mr') {
-                    return "वेळापत्रक: वर्ग सकाळी 9:00 वाजता सुरू होतात। नवीनतम वेळापत्रक कॉलेज वेबसाइटवर उपलब्ध आहे।";
-                } else if (currentLanguage === 'gu') {
-                    return "સમયપત્રક: વર્ગો સવારે 9:00 વાગ્યે શરૂ થાય છે। નવીનતમ સમયપત્રક કોલેજ વેબસાઇટ પર ઉપલબ્ધ છે।";
-                } else {
-                    return "Timetable: Classes start at 9:00 AM. The latest timetable is available on the college website and notice board.";
-                }
+            if (lower.includes('fee') || lower.includes('फीस')) {
+                return currentLanguage === 'hi' 
+                    ? "फीस संबंधी जानकारी: शैक्षणिक वर्ष 2024-25 के लिए फीस ₹50,000 है। अंतिम तारीख 15 जनवरी है। ऑनलाइन भुगतान के लिए कॉलेज पोर्टल का उपयोग करें।"
+                    : "Fee Information: The academic fee for 2024-25 is ₹50,000. Last date for payment is January 15th. You can pay online through the college portal.";
+            } else if (lower.includes('scholarship') || lower.includes('छात्रवृत्ति')) {
+                return currentLanguage === 'hi'
+                    ? "छात्रवृत्ति जानकारी: मेधावी छात्रवृत्ति, आर्थिक सहायता, और विशेष श्रेणी छात्रवृत्ति उपलब्ध है। आवेदन की अंतिम तारीख 30 दिसंबर है।"
+                    : "Scholarship Information: Merit scholarships, financial aid, and category-specific scholarships are available. Application deadline is December 30th.";
+            } else if (lower.includes('timetable') || lower.includes('समय')) {
+                return currentLanguage === 'hi'
+                    ? "समय सारणी: कक्षाएं सुबह 9:00 बजे से शुरू होती हैं। नवीनतम समय सारणी कॉलेज वेबसाइट पर उपलब्ध है।"
+                    : "Timetable: Classes start at 9:00 AM. The latest timetable is available on the college website and notice board.";
             } else {
-                if (currentLanguage === 'hi') {
-                    return "मैं आपकी सहायता के लिए यहाँ हूँ। मैं फीस, छात्रवृत्ति, समय सारणी, प्रवेश, परीक्षा कार्यक्रम और सामान्य कॉलेज की जानकारी में मदद कर सकता हूँ।";
-                } else if (currentLanguage === 'mr') {
-                    return "मी तुमच्या मदतीसाठी येथे आहे। मी फी, शिष्यवृत्ती, वेळापत्रक, प्रवेश, परीक्षा कार्यक्रम आणि सामान्य कॉलेज माहितीमध्ये मदत करू शकतो।";
-                } else if (currentLanguage === 'gu') {
-                    return "હું તમારી મદદ માટે અહીં છું। હું ફી, શિષ્યવૃત્તિ, સમયપત્રક, પ્રવેશ, પરીક્ષા કાર્યક્રમ અને સામાન્ય કોલેજની માહિતીમાં મદદ કરી શકું છું।";
-                } else {
-                    return "I'm here to help you! I can assist with fees, scholarships, timetables, admissions, exam schedules, and general college information.";
-                }
+                return currentLanguage === 'hi'
+                    ? "मैं आपकी सहायता के लिए यहाँ हूँ। मैं फीस, छात्रवृत्ति, समय सारणी, प्रवेश, परीक्षा कार्यक्रम और सामान्य कॉलेज की जानकारी में मदद कर सकता हूँ।"
+                    : "I'm here to help you! I can assist with fees, scholarships, timetables, admissions, exam schedules, and general college information.";
             }
         }
 
@@ -714,17 +343,6 @@
 
         // Initialize with current time
         document.getElementById('greetingTime').textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        
-        // Load API keys from localStorage if available
-        const savedTranslateKey = localStorage.getItem('translateApiKey');
-        const savedOpenaiKey = localStorage.getItem('openaiApiKey');
-        
-        if (savedTranslateKey) {
-            translateApiKey = savedTranslateKey;
-        }
-        if (savedOpenaiKey) {
-            openaiApiKey = savedOpenaiKey;
-        }
     </script>
 </body>
 </html>
