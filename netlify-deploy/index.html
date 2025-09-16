@@ -3,235 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campus Assist v2.0 - TRUE Multilingual AI Chatbot | SIH 2024</title>
+    <title>Campus Assist v2.0 - Multilingual Campus Chatbot | SIH 2024</title>
+    <meta name="description" content="Smart India Hackathon 2024 - Multilingual Campus Assistant for student queries in 8 Indian languages">
+    <meta name="keywords" content="Smart India Hackathon, SIH 2024, Campus Assistant, Multilingual Chatbot, Hindi, English, Student Queries">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea, #764ba2); height: 100vh; }
-        .container { height: 100vh; display: flex; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
-        .sidebar { width: 70px; background: rgba(255,255,255,0.95); transition: width 0.3s; }
-        .sidebar.expanded { width: 250px; }
-        .sidebar-header { padding: 20px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
-        .menu-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 10px; border-radius: 8px; cursor: pointer; }
-        .nav-item { display: flex; align-items: center; gap: 10px; padding: 15px 20px; margin: 5px; border-radius: 10px; cursor: pointer; color: #666; }
-        .nav-item.active { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
-        .main { flex: 1; display: flex; flex-direction: column; background: rgba(255,255,255,0.95); }
-        .header { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 20px; }
-        .title { font-size: 24px; font-weight: bold; margin-bottom: 5px; }
-        .subtitle { font-size: 14px; opacity: 0.9; }
-        .controls { display: flex; gap: 15px; margin-top: 15px; align-items: center; }
-        .lang-select { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 12px; border-radius: 20px; }
-        .help-btn { background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); color: white; padding: 8px 15px; border-radius: 20px; cursor: pointer; }
-        .messages { flex: 1; padding: 20px; overflow-y: auto; }
-        .message { display: flex; gap: 10px; margin-bottom: 20px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; }
+        .chat-container { height: 100vh; display: flex; background: #f3f4f6; }
+        .sidebar { background: white; border-right: 1px solid #e5e7eb; transition: all 0.3s; width: 64px; }
+        .sidebar.expanded { width: 256px; }
+        .sidebar-header { padding: 16px; display: flex; align-items: center; gap: 12px; }
+        .menu-btn { padding: 8px; border: none; background: none; border-radius: 8px; cursor: pointer; }
+        .menu-btn:hover { background: #f3f4f6; }
+        .nav-item { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px; margin: 4px 8px; border: none; background: none; border-radius: 8px; cursor: pointer; color: #6b7280; }
+        .nav-item.active { background: #eff6ff; color: #2563eb; }
+        .nav-item:hover { background: #f3f4f6; }
+        .main-chat { flex: 1; display: flex; flex-direction: column; }
+        .chat-header { background: white; border-bottom: 1px solid #e5e7eb; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .header-controls { display: flex; align-items: center; gap: 12px; }
+        .language-selector { display: flex; align-items: center; gap: 8px; }
+        .language-selector select { border: 1px solid #d1d5db; border-radius: 6px; padding: 4px 12px; font-size: 14px; }
+        .human-help-btn { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 8px; background: white; cursor: pointer; font-size: 14px; }
+        .human-help-btn:hover { background: #f9fafb; }
+        .messages-area { flex: 1; overflow-y: auto; padding: 16px; }
+        .message { display: flex; gap: 12px; margin-bottom: 16px; }
         .message.user { justify-content: flex-end; }
-        .message.user .content { flex-direction: row-reverse; }
-        .content { display: flex; gap: 10px; max-width: 80%; }
-        .avatar { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-        .avatar.bot { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
-        .avatar.user { background: linear-gradient(135deg, #f093fb, #f5576c); color: white; }
-        .bubble { padding: 15px 20px; border-radius: 18px; }
-        .bubble.bot { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .bubble.user { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
-        .meta { display: flex; gap: 8px; margin-bottom: 8px; }
-        .tag { font-size: 10px; padding: 3px 8px; border-radius: 10px; font-weight: bold; }
-        .lang-tag { background: rgba(102,126,234,0.1); color: #667eea; }
-        .conf-tag { background: rgba(76,175,80,0.1); color: #4caf50; }
-        .text { font-size: 14px; line-height: 1.5; margin-bottom: 5px; }
-        .time { font-size: 10px; opacity: 0.7; }
-        .quick { padding: 20px; }
-        .quick-panel { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        .quick-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; text-align: center; color: #333; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
-        .btn { display: flex; align-items: center; gap: 10px; padding: 15px; border: 2px solid #eee; border-radius: 12px; background: white; cursor: pointer; transition: all 0.3s; }
-        .btn:hover { background: linear-gradient(135deg, #667eea, #764ba2); color: white; transform: translateY(-2px); }
-        .btn-icon { font-size: 18px; }
-        .btn-text { font-size: 12px; font-weight: 600; }
-        .input-area { background: white; padding: 20px; border-top: 1px solid #eee; }
-        .api-setup { background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
-        .api-input { width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; margin-top: 5px; }
-        .api-status { font-size: 12px; margin-top: 5px; font-weight: bold; }
-        .api-status.connected { color: #27ae60; }
-        .api-status.disconnected { color: #e74c3c; }
-        .input-container { display: flex; gap: 10px; max-width: 600px; margin: 0 auto; }
-        .input { flex: 1; border: 2px solid #eee; border-radius: 20px; padding: 12px 20px; font-size: 14px; }
-        .input:focus { outline: none; border-color: #667eea; }
-        .send { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 12px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; }
-        .send:hover { transform: translateY(-1px); }
-        .send:disabled { background: #ccc; cursor: not-allowed; }
-        .hint { text-align: center; margin-top: 10px; font-size: 12px; color: #666; }
-        .typing { display: flex; }
-        .typing-bubble { background: white; padding: 15px 20px; border-radius: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .spinner { width: 15px; height: 15px; border: 2px solid #eee; border-top: 2px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite; }
+        .message-content { display: flex; gap: 12px; max-width: 80%; }
+        .message.user .message-content { flex-direction: row-reverse; }
+        .avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .avatar.bot { background: #dbeafe; color: #2563eb; }
+        .avatar.user { background: #f3f4f6; color: #6b7280; }
+        .message-bubble { border-radius: 16px; padding: 12px 16px; }
+        .message-bubble.bot { background: white; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .message-bubble.user { background: #2563eb; color: white; }
+        .message-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .language-tag, .confidence-tag { font-size: 12px; padding: 2px 8px; border-radius: 4px; }
+        .language-tag { background: #f3f4f6; color: #374151; }
+        .confidence-tag { background: #dbeafe; color: #1d4ed8; }
+        .message-text { font-size: 14px; line-height: 1.5; margin-bottom: 4px; }
+        .message-time { font-size: 12px; color: #6b7280; }
+        .message.user .message-time { color: #bfdbfe; }
+        .quick-actions { padding: 16px; }
+        .quick-actions-panel { background: white; border-radius: 12px; padding: 16px; border: 1px solid #e5e7eb; }
+        .quick-actions-title { font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 12px; }
+        .actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+        .action-btn { display: flex; align-items: center; gap: 8px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer; text-align: left; transition: all 0.2s; }
+        .action-btn:hover { background: #eff6ff; border-color: #93c5fd; }
+        .action-icon { color: #2563eb; }
+        .action-label { font-size: 12px; font-weight: 500; color: #374151; }
+        .input-area { background: white; border-top: 1px solid #e5e7eb; padding: 16px; }
+        .input-container { display: flex; gap: 8px; }
+        .message-input { flex: 1; border: 1px solid #d1d5db; border-radius: 8px; padding: 12px 16px; font-size: 14px; }
+        .message-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .send-btn { padding: 12px 16px; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer; }
+        .send-btn:hover { background: #1d4ed8; }
+        .send-btn:disabled { background: #9ca3af; cursor: not-allowed; }
+        .input-hint { font-size: 12px; color: #6b7280; text-align: center; margin-top: 8px; }
+        .loading { display: flex; justify-content: flex-start; }
+        .loading-bubble { background: white; border: 1px solid #e5e7eb; border-radius: 16px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .loading-content { display: flex; align-items: center; gap: 8px; }
+        .spinner { width: 16px; height: 16px; border: 2px solid #e5e7eb; border-top: 2px solid #2563eb; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="chat-container">
+        <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-                <span id="sidebarTitle" style="display:none; margin-left:10px; font-weight:bold;">Campus Assist</span>
+                <h2 style="font-weight: bold; color: #111827; display: none;" id="sidebarTitle">Campus Assist</h2>
             </div>
-            <div class="nav-item active">💬 <span class="nav-text" style="display:none;">Chat</span></div>
-            <div class="nav-item">📊 <span class="nav-text" style="display:none;">Analytics</span></div>
-            <div class="nav-item">👥 <span class="nav-text" style="display:none;">Admin</span></div>
-            <div class="nav-item">⚙️ <span class="nav-text" style="display:none;">Settings</span></div>
+            <nav style="padding: 0 8px;">
+                <button class="nav-item active">
+                    💬 <span style="display: none;" class="nav-text">Chat</span>
+                </button>
+                <button class="nav-item">
+                    📊 <span style="display: none;" class="nav-text">Analytics</span>
+                </button>
+                <button class="nav-item">
+                    👥 <span style="display: none;" class="nav-text">Admin</span>
+                </button>
+                <button class="nav-item">
+                    ⚙️ <span style="display: none;" class="nav-text">Settings</span>
+                </button>
+            </nav>
         </div>
         
-        <div class="main">
-            <div class="header">
-                <div class="title">TRUE Multilingual AI Campus Assistant</div>
-                <div class="subtitle">Smart India Hackathon 2024 - Powered by OpenAI for Perfect Language Understanding</div>
-                <div class="controls">
-                    <div>🌐</div>
-                    <select class="lang-select" onchange="switchLanguage(this.value)" id="langSelect">
-                        <option value="en">English</option>
-                        <option value="hi">हिंदी</option>
-                        <option value="gu">ગુજરાતી</option>
-                        <option value="mr">मराठी</option>
-                        <option value="bn">বাংলা</option>
-                        <option value="ta">தமிழ்</option>
-                        <option value="te">తెలుగు</option>
-                        <option value="kn">ಕನ್ನಡ</option>
-                    </select>
-                    <button class="help-btn">📞 Human Help</button>
+        <!-- Main Chat Area -->
+        <div class="main-chat">
+            <!-- Header -->
+            <div class="chat-header">
+                <div>
+                    <h1 style="font-size: 20px; font-weight: bold; color: #111827;">Multilingual Campus Assistant</h1>
+                    <p style="font-size: 14px; color: #6b7280;">Smart India Hackathon 2024 - Campus Query Solution</p>
+                </div>
+                <div class="header-controls">
+                    <div class="language-selector">
+                        🌐
+                        <select onchange="changeLanguage(this.value)" id="languageSelect">
+                            <option value="en">English</option>
+                            <option value="hi">हिंदी</option>
+                            <option value="mr">मराठी</option>
+                            <option value="gu">ગુજરાતી</option>
+                            <option value="bn">বাংলা</option>
+                            <option value="ta">தமிழ்</option>
+                            <option value="te">తెలుగు</option>
+                            <option value="kn">ಕನ್ನಡ</option>
+                        </select>
+                    </div>
+                    <button class="human-help-btn">📞 Human Help</button>
                 </div>
             </div>
             
-            <div class="messages" id="messages">
+            <!-- Messages Area -->
+            <div class="messages-area" id="messagesArea">
                 <div class="message bot">
-                    <div class="content">
+                    <div class="message-content">
                         <div class="avatar bot">🤖</div>
-                        <div class="bubble bot">
-                            <div class="meta">
-                                <span class="tag lang-tag" id="greetingLang">English</span>
-                                <span class="tag conf-tag">100% confident</span>
+                        <div class="message-bubble bot">
+                            <div class="message-meta">
+                                <span class="language-tag">English</span>
+                                <span class="confidence-tag">100% confident</span>
                             </div>
-                            <div class="text" id="greetingText">🚀 Hello! I'm your TRUE multilingual AI campus assistant. Connect your OpenAI API key above and I'll understand and respond in ANY Indian language naturally - Hindi, Gujarati, Marathi, Bengali, Tamil, Telugu, Kannada, and more!</div>
-                            <div class="time" id="greetingTime"></div>
+                            <div class="message-text" id="greetingText">Hello! I'm your multilingual campus assistant. I can help you with fees, scholarships, timetables, admissions, and other college information. You can talk to me in Hindi, English, or any of our supported regional languages!</div>
+                            <div class="message-time" id="greetingTime"></div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="quick" id="quickActions">
-                <div class="quick-panel">
-                    <div class="quick-title" id="quickTitle">🚀 Quick Help - Get Instant Answers</div>
-                    <div class="grid">
-                        <div class="btn" onclick="ask('fees')"><span class="btn-icon">💳</span><span class="btn-text" id="btn1">Fee Information</span></div>
-                        <div class="btn" onclick="ask('scholarships')"><span class="btn-icon">🎓</span><span class="btn-text" id="btn2">Scholarships</span></div>
-                        <div class="btn" onclick="ask('timetable')"><span class="btn-icon">📅</span><span class="btn-text" id="btn3">Timetable</span></div>
-                        <div class="btn" onclick="ask('admissions')"><span class="btn-icon">📄</span><span class="btn-text" id="btn4">Admissions</span></div>
-                        <div class="btn" onclick="ask('exams')"><span class="btn-icon">⏰</span><span class="btn-text" id="btn5">Exam Schedule</span></div>
-                        <div class="btn" onclick="ask('help')"><span class="btn-icon">❓</span><span class="btn-text" id="btn6">General Help</span></div>
+            <!-- Quick Actions -->
+            <div class="quick-actions" id="quickActions">
+                <div class="quick-actions-panel">
+                    <h3 class="quick-actions-title" id="quickTitle">Quick Help</h3>
+                    <div class="actions-grid">
+                        <button class="action-btn" onclick="sendQuickMessage('Tell me about fee structure and payment deadlines')">
+                            <span class="action-icon">💳</span>
+                            <span class="action-label" id="action1">Fee Information</span>
+                        </button>
+                        <button class="action-btn" onclick="sendQuickMessage('What scholarships are available for students?')">
+                            <span class="action-icon">🎓</span>
+                            <span class="action-label" id="action2">Scholarships</span>
+                        </button>
+                        <button class="action-btn" onclick="sendQuickMessage('Show me the current class timetable and schedule')">
+                            <span class="action-icon">📅</span>
+                            <span class="action-label" id="action3">Timetable</span>
+                        </button>
+                        <button class="action-btn" onclick="sendQuickMessage('How do I apply for admission? What are the requirements?')">
+                            <span class="action-icon">📄</span>
+                            <span class="action-label" id="action4">Admissions</span>
+                        </button>
+                        <button class="action-btn" onclick="sendQuickMessage('When are the upcoming exams and results?')">
+                            <span class="action-icon">⏰</span>
+                            <span class="action-label" id="action5">Exam Schedule</span>
+                        </button>
+                        <button class="action-btn" onclick="sendQuickMessage('What can you help me with? Show me all services')">
+                            <span class="action-icon">❓</span>
+                            <span class="action-label" id="action6">General Help</span>
+                        </button>
                     </div>
                 </div>
             </div>
             
+            <!-- Input Area -->
             <div class="input-area">
-                <div class="api-setup" id="apiSetup">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span>🔑 OpenAI API Key:</span>
-                        <input type="password" class="api-input" id="apiKeyInput" placeholder="Enter your OpenAI API key here" style="flex: 1;">
-                        <button onclick="connectAPI()" style="padding: 8px 15px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">Connect</button>
-                    </div>
-                    <div class="api-status disconnected" id="apiStatus">❌ AI Not Connected - Enter API key for TRUE multilingual responses</div>
-                </div>
                 <div class="input-container">
-                    <input type="text" class="input" id="userInput" placeholder="Type your question here..." onkeypress="if(event.key==='Enter') ask()">
-                    <button class="send" onclick="ask()" id="sendBtn">Send ➤</button>
+                    <input type="text" id="messageInput" class="message-input" placeholder="Type your question here..." onkeypress="handleKeyPress(event)">
+                    <button class="send-btn" onclick="sendMessage()">➤</button>
                 </div>
-                <div class="hint" id="hint">💡 You can ask questions in Hindi, English, or other Indian languages</div>
+                <p class="input-hint" id="inputHint">You can ask questions in Hindi, English, or other Indian languages</p>
             </div>
         </div>
     </div>
 
     <script>
-        let lang = 'en';
-        let sidebarOpen = false;
-        let apiKey = '';
-        let isConnected = false;
+        let currentLanguage = 'en';
+        let sidebarExpanded = false;
+        let messageCount = 1;
         
-        const LANGUAGES = {
+        const languages = {
             en: {
-                name: "English",
-                greeting: "🚀 Hello! I'm your TRUE multilingual AI campus assistant. Connect your OpenAI API key above and I'll understand and respond in ANY Indian language naturally - Hindi, Gujarati, Marathi, Bengali, Tamil, Telugu, Kannada, and more!",
-                thinking: "AI is processing your query...",
-                quickTitle: "🚀 Quick Help - Get Instant Answers",
-                buttons: ["Fee Information", "Scholarships", "Timetable", "Admissions", "Exam Schedule", "General Help"],
+                greeting: "Hello! I'm your multilingual campus assistant. I can help you with fees, scholarships, timetables, admissions, and other college information. You can talk to me in Hindi, English, or any of our supported regional languages!",
+                thinking: "Processing your query...",
+                quickTitle: "Quick Help",
+                actions: ["Fee Information", "Scholarships", "Timetable", "Admissions", "Exam Schedule", "General Help"],
                 placeholder: "Type your question here...",
-                hint: "💡 With AI connected, ask questions in ANY Indian language - I'll understand perfectly!",
-                responses: {
-                    fees: "Fee Information: Academic fee for 2024-25 is ₹50,000. Last date: January 15th. Pay online via college portal.",
-                    scholarships: "Scholarships: Merit scholarships (₹25,000), Financial aid (₹15,000), Category-specific (₹20,000). Deadline: December 30th.",
-                    timetable: "Timetable: Classes 9:00 AM - 5:00 PM. Lunch: 1:00-2:00 PM. Check college website for updates.",
-                    admissions: "Admissions: Applications open for 2024-25. Eligibility: 12th pass (60%). Fee: ₹1,000. Deadline: March 31st.",
-                    exams: "Exams: Mid-term in October, Finals in March. Results in 30 days. Supplementary in May.",
-                    help: "I can help with fees, scholarships, timetables, admissions, exams, and general college information. Ask me anything!"
-                }
+                hint: "You can ask questions in Hindi, English, or other Indian languages"
             },
             hi: {
-                name: "हिंदी", 
-                greeting: "🚀 नमस्ते! मैं आपका सच्चा बहुभाषी AI कैंपस असिस्टेंट हूँ। ऊपर अपनी OpenAI API key जोड़ें और मैं किसी भी भारतीय भाषा में स्वाभाविक रूप से समझूंगा और जवाब दूंगा!",
-                thinking: "AI आपके प्रश्न को समझ रहा है...",
-                quickTitle: "🚀 त्वरित सहायता - तत्काल उत्तर पाएं",
-                buttons: ["फीस की जानकारी", "छात्रवृत्ति", "समय सारणी", "प्रवेश", "परीक्षा समय", "सामान्य सहायता"],
+                greeting: "नमस्ते! मैं आपका बहुभाषी कैंपस असिस्टेंट हूँ। मैं फीस, छात्रवृत्ति, समय सारणी, प्रवेश और अन्य कॉलेज की जानकारी में आपकी मदद कर सकता हूँ। आप हिंदी, अंग्रेजी या हमारी किसी भी समर्थित क्षेत्रीय भाषा में मुझसे बात कर सकते हैं!",
+                thinking: "आपके प्रश्न को समझ रहा हूँ...",
+                quickTitle: "त्वरित सहायता",
+                actions: ["फीस की जानकारी", "छात्रवृत्ति", "समय सारणी", "प्रवेश", "परीक्षा समय", "सामान्य सहायता"],
                 placeholder: "यहाँ अपना प्रश्न लिखें...",
-                hint: "💡 AI के साथ, किसी भी भारतीय भाषा में प्रश्न पूछें - मैं पूरी तरह समझूंगा!",
-                responses: {
-                    fees: "फीस जानकारी: 2024-25 के लिए ₹50,000। अंतिम तारीख: 15 जनवरी। ऑनलाइन भुगतान करें।",
-                    scholarships: "छात्रवृत्ति: मेधावी (₹25,000), आर्थिक सहायता (₹15,000), श्रेणी-विशिष्ट (₹20,000)। अंतिम तारीख: 30 दिसंबर।",
-                    timetable: "समय सारणी: कक्षाएं 9:00 AM - 5:00 PM। लंच: 1:00-2:00 PM। अपडेट के लिए कॉलेज वेबसाइट देखें।",
-                    admissions: "प्रवेश: 2024-25 के लिए आवेदन खुले। योग्यता: 12वीं पास (60%)। शुल्क: ₹1,000। अंतिम तारीख: 31 मार्च।",
-                    exams: "परीक्षा: अक्टूबर में मध्यावधि, मार्च में अंतिम। परिणाम 30 दिनों में। मई में पूरक।",
-                    help: "मैं फीस, छात्रवृत्ति, समय सारणी, प्रवेश, परीक्षा और सामान्य कॉलेज की जानकारी में मदद कर सकता हूँ।"
-                }
-            },
-            gu: {
-                name: "ગુજરાતી",
-                greeting: "નમસ્તે! હું તમારો બહુભાષી કેમ્પસ આસિસ્ટન્ટ છું। હું ફી, શિષ્યવૃત્તિ, સમયપત્રક, પ્રવેશ અને અન્ય કોલેજની માહિતીમાં 8 ભારતીય ભાષાઓમાં મદદ કરી શકું!",
-                thinking: "તમારા પ્રશ્નને સમજી રહ્યો છું...",
-                quickTitle: "🚀 ઝડપી સહાય - તાત્કાલિક જવાબો",
-                buttons: ["ફીની માહિતી", "શિષ્યવૃત્તિ", "સમયપત્રક", "પ્રવેશ", "પરીક્ષા સમય", "સામાન્ય સહાય"],
-                placeholder: "અહીં તમારો પ્રશ્ન લખો...",
-                hint: "💡 તમે ગુજરાતી, હિન્દી, અંગ્રેજી કે અન્ય ભારતીય ભાષાઓમાં પ્રશ્ન પૂછી શકો",
-                responses: {
-                    fees: "ફી માહિતી: 2024-25 માટે ₹50,000। છેલ્લી તારીખ: 15 જાન્યુઆરી। ઓનલાઇન ચૂકવણી કરો।",
-                    scholarships: "શિષ્યવૃત્તિ: મેધાવી (₹25,000), આર્થિક સહાય (₹15,000)। છેલ્લી તારીખ: 30 ડિસેમ્બર।",
-                    timetable: "સમયપત્રક: વર્ગો 9:00 AM - 5:00 PM। લંચ: 1:00-2:00 PM। અપડેટ માટે વેબસાઇટ જુઓ।",
-                    admissions: "પ્રવેશ: 2024-25 માટે અરજીઓ ખુલી. યોગ્યતા: 12મી પાસ (60%)। ફી: ₹1,000।",
-                    exams: "પરીક્ષા: ઓક્ટોબરમાં મધ્યાવધિ, માર્ચમાં અંતિમ। પરિણામ 30 દિવસમાં।",
-                    help: "હું ફી, શિષ્યવૃત્તિ, સમયપત્રક, પ્રવેશ, પરીક્ષા અને કોલેજની માહિતીમાં મદદ કરી શકું છું।"
-                }
-            },
-            mr: {
-                name: "मराठी",
-                greeting: "नमस्कार! मी तुमचा बहुभाषिक कॅम्पस असिस्टंट आहे। मी फी, शिष्यवृत्ती, वेळापत्रक, प्रवेश आणि इतर महाविद्यालयीन माहितीमध्ये 8 भारतीय भाषांमध्ये मदत करू शकतो!",
-                thinking: "तुमचा प्रश्न समजून घेत आहे...",
-                quickTitle: "🚀 त्वरित मदत - तात्काळ उत्तरे",
-                buttons: ["फी माहिती", "शिष्यवृत्ती", "वेळापत्रक", "प्रवेश", "परीक्षा वेळ", "सामान्य मदत"],
-                placeholder: "येथे तुमचा प्रश्न लिहा...",
-                hint: "💡 तुम्ही मराठी, हिंदी, इंग्रजी किंवा इतर भारतीय भाषांमध्ये प्रश्न विचारू शकता",
-                responses: {
-                    fees: "फी माहिती: 2024-25 साठी ₹50,000। शेवटची तारीख: 15 जानेवारी। ऑनलाइन पेमेंट करा।",
-                    scholarships: "शिष्यवृत्ती: मेधावी (₹25,000), आर्थिक मदत (₹15,000)। शेवटची तारीख: 30 डिसेंबर।",
-                    timetable: "वेळापत्रक: वर्ग 9:00 AM - 5:00 PM। लंच: 1:00-2:00 PM। अपडेटसाठी वेबसाइट पहा।",
-                    admissions: "प्रवेश: 2024-25 साठी अर्ज उघडे आहेत। पात्रता: 12वी पास (60%)। फी: ₹1,000।",
-                    exams: "परीक्षा: ऑक्टोबरमध्ये मध्यावधि, मार्चमध्ये अंतिम। निकाल 30 दिवसांत।",
-                    help: "मी फी, शिष्यवृत्ती, वेळापत्रक, प्रवेश, परीक्षा आणि सामान्य महाविद्यालयीन माहितीत मदत करू शकतो।"
-                }
+                hint: "आप हिंदी, अंग्रेजी या अन्य भारतीय भाषाओं में प्रश्न पूछ सकते हैं"
             }
         };
 
         function toggleSidebar() {
-            sidebarOpen = !sidebarOpen;
+            sidebarExpanded = !sidebarExpanded;
             const sidebar = document.getElementById('sidebar');
             const title = document.getElementById('sidebarTitle');
             const navTexts = document.querySelectorAll('.nav-text');
             
-            if (sidebarOpen) {
+            if (sidebarExpanded) {
                 sidebar.classList.add('expanded');
-                title.style.display = 'inline';
+                title.style.display = 'block';
                 navTexts.forEach(text => text.style.display = 'inline');
             } else {
                 sidebar.classList.remove('expanded');
@@ -240,228 +220,129 @@
             }
         }
 
-        function switchLanguage(newLang) {
-            lang = newLang;
-            const data = LANGUAGES[lang];
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            const langData = languages[lang] || languages.en;
             
-            // Update all UI elements
-            document.getElementById('greetingText').textContent = data.greeting;
-            document.getElementById('greetingLang').textContent = data.name;
-            document.getElementById('quickTitle').textContent = data.quickTitle;
-            document.getElementById('userInput').placeholder = data.placeholder;
-            document.getElementById('hint').textContent = data.hint;
+            // Update greeting
+            document.getElementById('greetingText').textContent = langData.greeting;
             
-            // Update button texts
+            // Update quick actions
+            document.getElementById('quickTitle').textContent = langData.quickTitle;
             for (let i = 1; i <= 6; i++) {
-                document.getElementById('btn' + i).textContent = data.buttons[i-1];
+                document.getElementById(`action${i}`).textContent = langData.actions[i-1];
             }
+            
+            // Update placeholder and hint
+            document.getElementById('messageInput').placeholder = langData.placeholder;
+            document.getElementById('inputHint').textContent = langData.hint;
         }
 
-        async function ask(topic) {
-            const input = document.getElementById('userInput');
-            let query = topic;
+        function sendQuickMessage(message) {
+            sendMessage(message);
+            document.getElementById('quickActions').style.display = 'none';
+        }
+
+        function sendMessage(customMessage) {
+            const input = document.getElementById('messageInput');
+            const message = customMessage || input.value.trim();
             
-            if (!topic) {
-                query = input.value.trim();
-                if (!query) return;
-            }
+            if (!message) return;
             
             // Add user message
-            addMessage(query, false);
+            addMessage(message, false);
             input.value = '';
-            document.getElementById('quickActions').style.display = 'none';
             
-            // Show typing
-            showTyping();
+            // Show loading
+            showLoading();
             
-            // Generate response (now async for AI)
-            try {
-                const response = await getResponse(topic || query);
-                hideTyping();
+            // Simulate bot response
+            setTimeout(() => {
+                hideLoading();
+                const response = generateResponse(message);
                 addMessage(response, true);
-            } catch (error) {
-                hideTyping();
-                addMessage('Sorry, I encountered an error. Please try again.', true);
-                console.error('Response error:', error);
-            }
-        }
-
-        async function getResponse(query) {
-            if (!isConnected || !apiKey) {
-                const data = LANGUAGES[lang];
-                const q = query.toLowerCase();
-                
-                if (q.includes('fee') || q.includes('फी') || q.includes('ફી') || q.includes('फी') || q === 'fees') {
-                    return data.responses.fees;
-                } else if (q.includes('scholarship') || q.includes('छात्रवृत्ति') || q.includes('શિષ્યવૃત્તિ') || q.includes('शिष्यवृत्ती') || q === 'scholarships') {
-                    return data.responses.scholarships;
-                } else if (q.includes('timetable') || q.includes('समय') || q.includes('સમય') || q.includes('वेळापत्रक') || q === 'timetable') {
-                    return data.responses.timetable;
-                } else if (q.includes('admission') || q.includes('प्रवेश') || q.includes('પ્રવેશ') || q === 'admissions') {
-                    return data.responses.admissions;
-                } else if (q.includes('exam') || q.includes('परीक्षा') || q.includes('પરીક્ષા') || q === 'exams') {
-                    return data.responses.exams;
-                } else {
-                    return data.responses.help;
-                }
-            }
-            
-            // TRUE AI Response using OpenAI
-            try {
-                const langName = LANGUAGES[lang].name;
-                const systemPrompt = `You are a helpful campus assistant for an Indian college. You can help with fees, scholarships, timetables, admissions, exams, and general college information. Always respond in ${langName} language. Be helpful, accurate, and friendly. Keep responses concise but informative.`;
-                
-                const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey}`
-                    },
-                    body: JSON.stringify({
-                        model: 'gpt-3.5-turbo',
-                        messages: [
-                            { role: 'system', content: systemPrompt },
-                            { role: 'user', content: query }
-                        ],
-                        max_tokens: 200,
-                        temperature: 0.7
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                return data.choices[0].message.content.trim();
-                
-            } catch (error) {
-                console.error('AI Error:', error);
-                return `Sorry, I'm having trouble connecting to AI services. Error: ${error.message}. Using fallback response.`;
-            }
+            }, 1500);
         }
 
         function addMessage(text, isBot) {
-            const messages = document.getElementById('messages');
-            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-            const data = LANGUAGES[lang];
-            
+            const messagesArea = document.getElementById('messagesArea');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isBot ? 'bot' : 'user'}`;
+            
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
             messageDiv.innerHTML = `
-                <div class="content">
+                <div class="message-content">
                     <div class="avatar ${isBot ? 'bot' : 'user'}">${isBot ? '🤖' : '👤'}</div>
-                    <div class="bubble ${isBot ? 'bot' : 'user'}">
-                        ${isBot ? `<div class="meta">
-                            <span class="tag lang-tag">${data.name}</span>
-                            <span class="tag conf-tag">95% confident</span>
-                        </div>` : ''}
-                        <div class="text">${text}</div>
-                        <div class="time">${time}</div>
+                    <div class="message-bubble ${isBot ? 'bot' : 'user'}">
+                        ${isBot ? `
+                            <div class="message-meta">
+                                <span class="language-tag">${currentLanguage === 'hi' ? 'Hindi' : 'English'}</span>
+                                <span class="confidence-tag">95% confident</span>
+                            </div>
+                        ` : ''}
+                        <div class="message-text">${text}</div>
+                        <div class="message-time">${time}</div>
                     </div>
                 </div>
             `;
             
-            messages.appendChild(messageDiv);
-            messages.scrollTop = messages.scrollHeight;
+            messagesArea.appendChild(messageDiv);
+            messagesArea.scrollTop = messagesArea.scrollHeight;
         }
 
-        function showTyping() {
-            const messages = document.getElementById('messages');
-            const data = LANGUAGES[lang];
-            
-            const typingDiv = document.createElement('div');
-            typingDiv.id = 'typing';
-            typingDiv.className = 'message bot typing';
-            typingDiv.innerHTML = `
-                <div class="content">
-                    <div class="avatar bot">🤖</div>
-                    <div class="typing-bubble">
+        function showLoading() {
+            const messagesArea = document.getElementById('messagesArea');
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'loadingMessage';
+            loadingDiv.className = 'loading';
+            loadingDiv.innerHTML = `
+                <div class="loading-bubble">
+                    <div class="loading-content">
                         <div class="spinner"></div>
-                        <span style="margin-left: 10px; font-size: 12px;">${data.thinking}</span>
+                        <span>${languages[currentLanguage]?.thinking || 'Processing your query...'}</span>
                     </div>
                 </div>
             `;
-            
-            messages.appendChild(typingDiv);
-            messages.scrollTop = messages.scrollHeight;
+            messagesArea.appendChild(loadingDiv);
+            messagesArea.scrollTop = messagesArea.scrollHeight;
         }
 
-        function hideTyping() {
-            const typing = document.getElementById('typing');
-            if (typing) typing.remove();
+        function hideLoading() {
+            const loading = document.getElementById('loadingMessage');
+            if (loading) loading.remove();
         }
 
-        function connectAPI() {
-            const apiKeyInput = document.getElementById('apiKeyInput');
-            const apiStatus = document.getElementById('apiStatus');
-            const sendBtn = document.getElementById('sendBtn');
+        function generateResponse(message) {
+            const lower = message.toLowerCase();
             
-            apiKey = apiKeyInput.value.trim();
-            
-            if (!apiKey) {
-                apiStatus.className = 'api-status disconnected';
-                apiStatus.textContent = '❌ Please enter a valid API key';
-                return;
-            }
-            
-            if (!apiKey.startsWith('sk-')) {
-                apiStatus.className = 'api-status disconnected';
-                apiStatus.textContent = '❌ Invalid API key format (should start with sk-)';
-                return;
-            }
-            
-            // Test API connection
-            testAPIConnection();
-        }
-        
-        async function testAPIConnection() {
-            const apiStatus = document.getElementById('apiStatus');
-            const sendBtn = document.getElementById('sendBtn');
-            
-            apiStatus.className = 'api-status';
-            apiStatus.style.color = '#f39c12';
-            apiStatus.textContent = '🔄 Testing API connection...';
-            
-            try {
-                const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey}`
-                    },
-                    body: JSON.stringify({
-                        model: 'gpt-3.5-turbo',
-                        messages: [{ role: 'user', content: 'Test' }],
-                        max_tokens: 5
-                    })
-                });
-                
-                if (response.ok) {
-                    isConnected = true;
-                    apiStatus.className = 'api-status connected';
-                    apiStatus.textContent = '✅ AI Connected - TRUE multilingual responses enabled!';
-                    sendBtn.disabled = false;
-                    
-                    // Hide API setup after successful connection
-                    setTimeout(() => {
-                        document.getElementById('apiSetup').style.display = 'none';
-                    }, 3000);
-                    
-                    addMessage('🎉 AI is now connected! I can understand and respond in ANY Indian language naturally. Ask me anything about college!', true);
-                } else {
-                    throw new Error(`API responded with status ${response.status}`);
-                }
-                
-            } catch (error) {
-                isConnected = false;
-                apiStatus.className = 'api-status disconnected';
-                apiStatus.textContent = `❌ Connection failed: ${error.message}`;
-                sendBtn.disabled = false;
+            if (lower.includes('fee') || lower.includes('फीस')) {
+                return currentLanguage === 'hi' 
+                    ? "फीस संबंधी जानकारी: शैक्षणिक वर्ष 2024-25 के लिए फीस ₹50,000 है। अंतिम तारीख 15 जनवरी है। ऑनलाइन भुगतान के लिए कॉलेज पोर्टल का उपयोग करें।"
+                    : "Fee Information: The academic fee for 2024-25 is ₹50,000. Last date for payment is January 15th. You can pay online through the college portal.";
+            } else if (lower.includes('scholarship') || lower.includes('छात्रवृत्ति')) {
+                return currentLanguage === 'hi'
+                    ? "छात्रवृत्ति जानकारी: मेधावी छात्रवृत्ति, आर्थिक सहायता, और विशेष श्रेणी छात्रवृत्ति उपलब्ध है। आवेदन की अंतिम तारीख 30 दिसंबर है।"
+                    : "Scholarship Information: Merit scholarships, financial aid, and category-specific scholarships are available. Application deadline is December 30th.";
+            } else if (lower.includes('timetable') || lower.includes('समय')) {
+                return currentLanguage === 'hi'
+                    ? "समय सारणी: कक्षाएं सुबह 9:00 बजे से शुरू होती हैं। नवीनतम समय सारणी कॉलेज वेबसाइट पर उपलब्ध है।"
+                    : "Timetable: Classes start at 9:00 AM. The latest timetable is available on the college website and notice board.";
+            } else {
+                return currentLanguage === 'hi'
+                    ? "मैं आपकी सहायता के लिए यहाँ हूँ। मैं फीस, छात्रवृत्ति, समय सारणी, प्रवेश, परीक्षा कार्यक्रम और सामान्य कॉलेज की जानकारी में मदद कर सकता हूँ।"
+                    : "I'm here to help you! I can assist with fees, scholarships, timetables, admissions, exam schedules, and general college information.";
             }
         }
-        // Initialize
-        document.getElementById('greetingTime').textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Initialize with current time
+        document.getElementById('greetingTime').textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     </script>
 </body>
 </html>
