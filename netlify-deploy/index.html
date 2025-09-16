@@ -77,16 +77,19 @@
                 <h2 style="font-weight: bold; color: #111827; display: none;" id="sidebarTitle">Campus Assist</h2>
             </div>
             <nav style="padding: 0 8px;">
-                <button class="nav-item active">
+                <button class="nav-item active" onclick="showPage('chat')">
                     💬 <span style="display: none;" class="nav-text">Chat</span>
                 </button>
-                <button class="nav-item">
+                <button class="nav-item" onclick="showPage('knowledge')">
+                    📚 <span style="display: none;" class="nav-text">Knowledge Base</span>
+                </button>
+                <button class="nav-item" onclick="showPage('assets')">
+                    💼 <span style="display: none;" class="nav-text">College Assets</span>
+                </button>
+                <button class="nav-item" onclick="showPage('analytics')">
                     📊 <span style="display: none;" class="nav-text">Analytics</span>
                 </button>
-                <button class="nav-item">
-                    👥 <span style="display: none;" class="nav-text">Admin</span>
-                </button>
-                <button class="nav-item">
+                <button class="nav-item" onclick="showPage('settings')">
                     ⚙️ <span style="display: none;" class="nav-text">Settings</span>
                 </button>
             </nav>
@@ -203,6 +206,18 @@
             }
         };
 
+        function showPage(page) {
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            
+            // Add active class to clicked nav item
+            event.target.classList.add('active');
+            
+            // For now, just keep the chat interface visible
+            // In future, we can add actual page switching here
+            console.log('Switching to page:', page);
+        }
+        
         function toggleSidebar() {
             sidebarExpanded = !sidebarExpanded;
             const sidebar = document.getElementById('sidebar');
